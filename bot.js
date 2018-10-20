@@ -5,8 +5,7 @@ const { ActivityTypes } = require('botbuilder');
 
 // Turn counter property
 const TURN_COUNTER_PROPERTY = 'turnCounterProperty';
-var porn;
-
+const Pornsearch = require('pornsearch');
 class MyBot {
     /**
    *
@@ -17,24 +16,39 @@ class MyBot {
     // See https://aka.ms/about-bot-state-accessors to learn more about the bot state and state accessors.
         this.countProperty = conversationState.createProperty(TURN_COUNTER_PROPERTY);
         this.conversationState = conversationState;
+        this.video = {};
+    }
+    async getVideo(category) {
+        await Pornsearch.search(category)
+            .videos()
+            .then(gifs => { this.video = gifs[0]; });
+    }
+
+    async getRandom(category, randomPageNumber) {
+        await Pornsearch.search(category)
+            .videos(randomPageNumber)
+            .then(gifs => { this.video = gifs; });
     }
     /**
    *
    * @param {TurnContext} on turn context object.
    */
     async onTurn(turnContext) {
-        const Pornsearch = require('pornsearch');
         // See https://aka.ms/about-bot-activity-message to learn more about the message and other activity types.
         if (turnContext.activity.type === ActivityTypes.Message) {
-            if (turnContext.activity.text.includes('pron')) {
-                var args = turnContext.activity.text.slice().trim().split(' ');
+            if (turnContext.activity.text.toLowerCase().includes('pron') && turnContext.activity.text.toLowerCase().includes('random')) {
+                let args = turnContext.activity.text.toLowerCase().slice().trim().split(' ');
                 let randomPageNumber = Math.floor(Math.random() * 100);
-                Pornsearch.search(args[args.length - 1])
-                    .videos(randomPageNumber)
-                    .then(gifs => { porn = gifs; });
-                let randomVideoNumber = Math.floor(Math.random() * porn.length);
-                await turnContext.sendActivity(`${ porn[randomVideoNumber].title } + ${ porn[randomVideoNumber].url }`);
-                console.log(porn);
+                let category = args.filter(arg => arg !== 'pron' && arg !== 'random');
+                await this.getRandom(category, randomPageNumber);
+                console.log(category);
+                let randomVideoNumber = Math.floor(Math.random() * this.video.length);
+                await turnContext.sendActivity(`${ this.video[randomVideoNumber].title } + ${ this.video[randomVideoNumber].url }`);
+            } else if (turnContext.activity.text.toLowerCase().includes('pron')) {
+                let args = turnContext.activity.text.toLowerCase().slice().trim().split(' ');
+                let category = args.filter(arg => arg !== 'pron');
+                await this.getVideo(category);
+                await turnContext.sendActivity(`${ this.video.title } + ${ this.video.url }`);
             }
             // await turnContext.sendActivity(porn[0].webm);
             // read from state.
