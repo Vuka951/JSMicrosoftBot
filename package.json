@@ -12,9 +12,13 @@
         "watch": "nodemon ./index.js"
     },
     "dependencies": {
+        "axios": "^0.18.0",
+        "babel-runtime": "^6.26.0",
         "botbuilder": "^4.0.6",
         "botframework-config": "^4.0.6",
+        "cheerio": "^1.0.0-rc.2",
         "dotenv": "^6.0.0",
+        "pornsearch": "^2.4.2",
         "restify": "^6.3.4"
     },
     "devDependencies": {

@@ -5,6 +5,7 @@ const { ActivityTypes } = require('botbuilder');
 
 // Turn counter property
 const TURN_COUNTER_PROPERTY = 'turnCounterProperty';
+var porn;
 
 class MyBot {
     /**
@@ -22,19 +23,29 @@ class MyBot {
    * @param {TurnContext} on turn context object.
    */
     async onTurn(turnContext) {
-    // See https://aka.ms/about-bot-activity-message to learn more about the message and other activity types.
+        const Pornsearch = require('pornsearch');
+        // See https://aka.ms/about-bot-activity-message to learn more about the message and other activity types.
         if (turnContext.activity.type === ActivityTypes.Message) {
-            // read from state.
-            if (turnContext.activity.text.includes('?') || turnContext.activity.text.includes('gay')) {
-                if (Math.floor(Math.random() * 10) > 7) await turnContext.sendActivity(`no u`);
+            if (turnContext.activity.text.includes('pron')) {
+                var args = turnContext.activity.text.slice().trim().split(' ');
+                let randomPageNumber = Math.floor(Math.random() * 100);
+                Pornsearch.search(args[args.length - 1])
+                    .videos(randomPageNumber)
+                    .then(gifs => { porn = gifs; });
+                let randomVideoNumber = Math.floor(Math.random() * porn.length);
+                await turnContext.sendActivity(`${ porn[randomVideoNumber].title } + ${ porn[randomVideoNumber].url }`);
+                console.log(porn);
             }
+            // await turnContext.sendActivity(porn[0].webm);
+            // read from state.
+            // if (turnContext.activity.text.includes('?') || turnContext.activity.text.includes('gay')) {
+            //     if (Math.floor(Math.random() * 10) > 7) await turnContext.sendActivity(`no u`);
+            // }
             // let count = await this.countProperty.get(turnContext);
             // count = count === undefined ? 1 : ++count;
             // await turnContext.sendActivity(`${ count }: You said "${ turnContext.activity.text }"`);
             // // increment and set turn counter.
             // await this.countProperty.set(turnContext, count);
-        } else {
-            // await turnContext.sendActivity(`[${ turnContext.activity.type } event detected]`);
         }
         // Save state changes
         await this.conversationState.saveChanges(turnContext);
