@@ -38,7 +38,7 @@ class MyBot {
         if (turnContext.activity.type === ActivityTypes.Message) {
             if (turnContext.activity.text.toLowerCase().includes('pron') && turnContext.activity.text.toLowerCase().includes('random')) {
                 let args = turnContext.activity.text.toLowerCase().slice().trim().split(' ');
-                let randomPageNumber = Math.floor(Math.random() * 100);
+                let randomPageNumber = Math.floor(Math.random() * 10);
                 let category = args.filter(arg => arg !== 'pron' && arg !== 'random');
                 await this.getRandom(category, randomPageNumber);
                 console.log(category);
@@ -48,6 +48,7 @@ class MyBot {
                 let args = turnContext.activity.text.toLowerCase().slice().trim().split(' ');
                 let category = args.filter(arg => arg !== 'pron');
                 await this.getVideo(category);
+                console.log(category);
                 await turnContext.sendActivity(`${ this.video.title } + ${ this.video.url }`);
             }
             // await turnContext.sendActivity(porn[0].webm);
