@@ -43,13 +43,13 @@ class MyBot {
                 await this.getRandom(category, randomPageNumber);
                 console.log(category);
                 let randomVideoNumber = Math.floor(Math.random() * this.video.length);
-                await turnContext.sendActivity(`${ this.video[randomVideoNumber].title } + ${ this.video[randomVideoNumber].url }`);
+                await turnContext.sendActivity(`${ this.video[randomVideoNumber].title } \n ${ this.video[randomVideoNumber].url }`);
             } else if (turnContext.activity.text.toLowerCase().includes('pron')) {
                 let args = turnContext.activity.text.toLowerCase().slice().trim().split(' ');
                 let category = args.filter(arg => arg !== 'pron');
                 await this.getVideo(category);
                 console.log(category);
-                await turnContext.sendActivity(`${ this.video.title } + ${ this.video.url }`);
+                await turnContext.sendActivity(`${ this.video.title } \n ${ this.video.url }`);
             }
             // await turnContext.sendActivity(porn[0].webm);
             // read from state.
